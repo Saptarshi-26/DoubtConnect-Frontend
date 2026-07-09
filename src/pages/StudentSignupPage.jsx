@@ -190,7 +190,7 @@ function StudentSignupPage() {
                   Verify your email with Google
                 </button>
                 
-                <div className="absolute inset-0 opacity-0 cursor-pointer scale-150 origin-center z-10">
+               <div className="absolute inset-0 opacity-0 z-10">
                   <GoogleLogin
                     onSuccess={async (credentialResponse) => {
                       try {
