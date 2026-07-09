@@ -180,37 +180,24 @@ function StudentSignupPage() {
               <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/[0.02] py-4 text-center font-extrabold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
                 ✓ Verified: {googleEmail}
               </div>
-            ) : (
-              <div className="relative w-full h-[52px] rounded-xl overflow-hidden group shadow-sm">
-                <button
-                  type="button"
-                  className="absolute inset-0 w-full h-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-700 font-extrabold text-xs uppercase tracking-wider transition-colors group-hover:bg-amber-100 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-400 dark:group-hover:bg-amber-500/20 pointer-events-none z-0"
-                >
-                  <IconGoogle className="h-4 w-4 shrink-0" />
-                  Verify your email with Google
-                </button>
-                
-               <div className="absolute inset-0 opacity-0 z-10">
-                  <GoogleLogin
-                    onSuccess={async (credentialResponse) => {
-                      try {
-                        const res = await api.post("/google/verify", {
-                          googleIdToken: credentialResponse.credential,
-                        });
-                        setGoogleVerified(true);
-                        setGoogleEmail(res.data.email);
-                        setGoogleIdToken(credentialResponse.credential);
-                      } catch (err) {
-                        alert(err.response?.data ?? "Google verification failed.");
-                      }
-                    }}
-                    onError={() => {
-                      alert("Google verification failed.");
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+            ) : <GoogleLogin
+  onSuccess={async (credentialResponse) => {
+    try {
+      const res = await api.post("/google/verify", {
+        googleIdToken: credentialResponse.credential,
+      });
+
+      setGoogleVerified(true);
+      setGoogleEmail(res.data.email);
+      setGoogleIdToken(credentialResponse.credential);
+    } catch (err) {
+      alert(err.response?.data ?? "Google verification failed.");
+    }
+  }}
+  onError={() => {
+    alert("Google verification failed.");
+  }}
+/>}
           </div>
 
           {/* Golden Sunset Account Activation Button */}
