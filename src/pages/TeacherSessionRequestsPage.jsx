@@ -162,6 +162,20 @@ function TeacherSessionRequestsPage() {
       return;
     }
 
+    if (decision === "ACCEPTED") {
+      try {
+        await api.get("/payout");
+      } catch (err) {
+        const goToPayout = window.confirm(
+          "You haven't added your payment details yet. Students pay you directly, so this needs to be set up before you can accept a session. Add your payment details now?"
+        );
+        if (goToPayout) {
+          navigate("/payout");
+        }
+        return;
+      }
+    }
+
     if (decision === "REJECTED") {
       const confirmed = window.confirm(
         `Reject the request from ${request.studentName}? This can't be undone.`
@@ -191,7 +205,6 @@ function TeacherSessionRequestsPage() {
       setActioningId(null);
     }
   };
-
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-950 dark:bg-[#06050C] dark:text-white antialiased relative overflow-hidden">
       

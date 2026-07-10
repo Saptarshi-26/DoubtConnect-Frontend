@@ -74,7 +74,7 @@ function EducatorsPage() {
 
   const mapTeacherProfile = (t) => ({
     id: t.id,
-    name: t.user?.username,
+    name: t.name,
     profilePictureUrl: t.profilePictureUrl,
     subjects: t.subjects,
     language: t.language,
@@ -157,32 +157,47 @@ setTestEducatorIds(testIds);
     }
   };
 
-  const handleSearch = async () => {
-    const subject = subjectQuery.trim();
-    if (!subject) return;
+ const handleSearch = async () => {
+  const subject = subjectQuery.trim();
+  if (!subject) return;
 
-    setShowTestEducators(false);
-    setShowFavouritesOnly(false);
-    setSearching(true);
-    setSearchError("");
-    try {
-      const res = await api.get("/teacher/search", {
-        params: { subject },
-      });
+  setShowFavouritesOnly(false);
+  setSearching(true);
+  setSearchError("");
 
-      if (Array.isArray(res.data)) {
-        setEducators(res.data.filter((e) => !testEducatorIds.has(e.id)));
+  try {
+
+    const url = showTestEducators
+      ? "/test-data/search"
+      : "/teacher/search";
+
+    const res = await api.get(url, {
+      params: { subject },
+    });
+
+    if (Array.isArray(res.data)) {
+
+      if (showTestEducators) {
+        setEducators(res.data);
       } else {
-        setEducators([]);
+        setEducators(
+          res.data.filter((e) => !testEducatorIds.has(e.id))
+        );
       }
-      setSearchActive(true);
-    } catch (err) {
-      console.log(err);
-      setSearchError("Unable to search right now. Please try again.");
-    } finally {
-      setSearching(false);
+
+    } else {
+      setEducators([]);
     }
-  };
+
+    setSearchActive(true);
+
+  } catch (err) {
+    console.log(err);
+    setSearchError("Unable to search right now. Please try again.");
+  } finally {
+    setSearching(false);
+  }
+};
 
   const handleClearSearch = () => {
     setSubjectQuery("");
@@ -207,10 +222,9 @@ setTestEducatorIds(testIds);
     setSearchActive(false);
     setSubjectQuery("");
     setLoading(true);
-    const list = await fetchFavourites();
-    const filtered = list.filter((t) => !testEducatorIds.has(t.id));
-    setEducators(filtered);
-    setFavouriteIds(new Set(filtered.map((t) => t.id)));
+   const list = await fetchFavourites();
+    setEducators(list);
+    setFavouriteIds(new Set(list.map((t) => t.id)));
     setLoading(false);
   };
 

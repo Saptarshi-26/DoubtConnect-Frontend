@@ -11,17 +11,6 @@ function IconArrowLeft(props) {
   );
 }
 
-function IconGoogle(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.18 1-.78 1.85-1.63 2.42v2.84h2.64c1.55-1.42 2.43-3.52 2.43-6.07z" />
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-2.64-2.84c-.73.49-1.66.78-2.64.78-2.03 0-4.71-1.37-5.33-3.22H3.04v2.95C4.89 21.68 8.23 23 12 23z" />
-      <path d="M6.67 15.06a7.17 7.17 0 0 1 0-2.12V10H3.04a11.94 11.94 0 0 0 0 4l3.63-2.94z" />
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 8.23 1 4.89 2.32 3.04 5.05L6.67 8c.62-1.85 3.3-3.22 5.33-3.22z" />
-    </svg>
-  );
-}
-
 function IconX(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -41,8 +30,6 @@ function TeacherSignupPage() {
   const [subjects, setSubjects] = useState([]);
 
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
     language: "",
     bio: "",
     ratePerThirtyMin: "",
@@ -95,9 +82,12 @@ function TeacherSignupPage() {
       return;
     }
 
+    if (!formData.language.trim() || !formData.bio.trim() || !formData.ratePerThirtyMin) {
+      alert("Please fill in language, bio, and your rate.");
+      return;
+    }
+
     const payload = {
-      username: formData.username,
-      password: formData.password,
       role: "TEACHER",
       language: formData.language,
       bio: formData.bio,
@@ -109,7 +99,7 @@ function TeacherSignupPage() {
     try {
       setLoading(true);
       const res = await api.post("/auth/signup", payload);
-      alert(res.data.message);
+      alert(res.data.message ?? "Successfully registered.");
       navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message ?? "Registration failed.");
@@ -120,12 +110,10 @@ function TeacherSignupPage() {
 
   return (
     <div className="min-h-screen flex bg-[#FAFAF9] dark:bg-[#06050C] text-slate-950 dark:text-white antialiased selection:bg-violet-600 selection:text-white relative overflow-hidden">
-      
-      {/* Background soft lighting effects */}
+
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-violet-200/40 dark:bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-fuchsia-100/40 dark:bg-fuchsia-500/5 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Left Block Side Panel */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white items-center justify-center p-16 border-r border-slate-200 dark:border-white/10 relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(139,92,246,0.06),transparent)] pointer-events-none" />
         <div className="max-w-md relative z-10">
@@ -141,19 +129,17 @@ function TeacherSignupPage() {
             Help students solve doubts while their curiosity is still alive.
           </p>
           <p className="mt-6 text-sm leading-relaxed text-slate-400 font-medium">
-            Build your teaching profile, manage sessions and connect with students who need your guidance.
+            Verify with Google, build your teaching profile, and start taking sessions.
           </p>
         </div>
       </div>
 
-      {/* Right Input Panel */}
       <div className="flex flex-1 items-center justify-center p-6 sm:p-8 relative z-10 overflow-y-auto">
-        
+
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-xl rounded-3xl border-2 border-slate-300 bg-white p-8 sm:p-10 dark:bg-[#0F0D1A] dark:border-white/20 shadow-sm"
         >
-          {/* Back button link */}
           <Link
             to="/signup"
             className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 transition-colors"
@@ -167,36 +153,45 @@ function TeacherSignupPage() {
           </h2>
 
           <p className="mt-3 text-[15px] font-medium text-slate-500 dark:text-slate-400">
-            Tell students a little about yourself.
+            Verify with Google, then tell students a little about yourself.
           </p>
 
-          {/* Form Inputs */}
-          <div className="mt-8 space-y-4">
-            <input
-              type="text"
-              placeholder="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400"
-            />
+          {/* Google verification first — everything below depends on it */}
+          <div className="mt-8">
+            {googleVerified ? (
+              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/[0.02] py-4 text-center font-bold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
+                ✓ Verified: {googleEmail}
+              </div>
+            ) : (
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    const res = await api.post("/google/verify", {
+                      googleIdToken: credentialResponse.credential,
+                    });
+                    setGoogleVerified(true);
+                    setGoogleEmail(res.data.email);
+                    setGoogleIdToken(credentialResponse.credential);
+                  } catch (err) {
+                    alert(err.response?.data?.message ?? "Google verification failed.");
+                  }
+                }}
+                onError={() => {
+                  alert("Google verification failed.");
+                }}
+              />
+            )}
+          </div>
 
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400"
-            />
-
+          <div className="mt-4 space-y-4">
             <input
               type="text"
               placeholder="Preferred Language"
               name="language"
               value={formData.language}
               onChange={handleChange}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400"
+              disabled={!googleVerified}
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
             />
 
             <textarea
@@ -205,11 +200,11 @@ function TeacherSignupPage() {
               name="bio"
               value={formData.bio}
               onChange={handleChange}
-              className="w-full resize-none rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400"
+              disabled={!googleVerified}
+              className="w-full resize-none rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
             />
 
-            {/* Subject tag input */}
-            <div className="w-full rounded-xl border-2 border-slate-300 p-3 transition bg-slate-50/50 focus-within:border-violet-500 focus-within:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:focus-within:border-violet-400">
+            <div className={`w-full rounded-xl border-2 border-slate-300 p-3 transition bg-slate-50/50 focus-within:border-violet-500 focus-within:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:focus-within:border-violet-400 ${!googleVerified ? "opacity-50 pointer-events-none" : ""}`}>
               {subjects.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-2">
                   {subjects.map((subject, index) => (
@@ -237,11 +232,13 @@ function TeacherSignupPage() {
                   value={subjectInput}
                   onChange={(e) => setSubjectInput(e.target.value)}
                   onKeyDown={handleSubjectKeyDown}
+                  disabled={!googleVerified}
                   className="flex-1 bg-transparent outline-none font-medium text-sm dark:text-white min-w-0"
                 />
                 <button
                   type="button"
                   onClick={addSubject}
+                  disabled={!googleVerified}
                   className="shrink-0 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-950 px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-violet-600 dark:hover:bg-violet-400 dark:hover:text-white transition-colors"
                 >
                   Add
@@ -255,52 +252,11 @@ function TeacherSignupPage() {
               name="ratePerThirtyMin"
               value={formData.ratePerThirtyMin}
               onChange={handleChange}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400"
+              disabled={!googleVerified}
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
             />
           </div>
 
-          {/* Custom Google verification layout section positioned below fields */}
-          <div className="mt-5">
-            {googleVerified ? (
-              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/[0.02] py-4 text-center font-bold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
-                ✓ Verified: {googleEmail}
-              </div>
-            ) : (
-              /* Premium covered button element matching layout requests */
-              <div className="relative w-full h-[52px] rounded-xl overflow-hidden group">
-                <button
-                  type="button"
-                  className="absolute inset-0 w-full h-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-slate-400 bg-slate-50 text-slate-800 font-bold text-xs uppercase tracking-wider transition-colors group-hover:bg-slate-100 group-hover:border-slate-500 dark:bg-white/[0.02] dark:border-white/30 dark:text-slate-200 dark:group-hover:bg-white/5 pointer-events-none z-0"
-                >
-                  <IconGoogle className="h-4 w-4 shrink-0" />
-                  Verify your email with Google
-                </button>
-                
-                {/* Overlay component catches clicks flawlessly */}
-                <div className="absolute inset-0 opacity-0 cursor-pointer scale-150 origin-center z-10">
-                  <GoogleLogin
-                    onSuccess={async (credentialResponse) => {
-                      try {
-                        const res = await api.post("/google/verify", {
-                          googleIdToken: credentialResponse.credential,
-                        });
-                        setGoogleVerified(true);
-                        setGoogleEmail(res.data.email);
-                        setGoogleIdToken(credentialResponse.credential);
-                      } catch (err) {
-                        alert(err.response?.data ?? "Google verification failed.");
-                      }
-                    }}
-                    onError={() => {
-                      alert("Google verification failed.");
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Final creation button trigger code */}
           <button
             type="submit"
             disabled={loading || !googleVerified}

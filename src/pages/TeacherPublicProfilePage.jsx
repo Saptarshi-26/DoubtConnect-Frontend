@@ -24,6 +24,32 @@ function IconHeart({ filled, ...props }) {
   );
 }
 
+function IconCalendar(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  );
+}
+
+function formatDayLabel(dateStr) {
+  const date = new Date(dateStr + "T00:00:00");
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+}
+
+function formatTime(dateTimeStr) {
+  return new Date(dateTimeStr).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 function TeacherPublicProfilePage() {
   const navigate = useNavigate();
   const { teacherId } = useParams();
@@ -45,11 +71,16 @@ function TeacherPublicProfilePage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [toast, setToast] = useState("");
 
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(true);
+  const [availabilityError, setAvailabilityError] = useState("");
+
   useEffect(() => {
     loadProfile();
     if (isStudent) {
       loadFavouriteStatus();
       loadReportStatus();
+      loadAvailability();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teacherId]);
@@ -71,6 +102,22 @@ function TeacherPublicProfilePage() {
       setLoadError("Unable to load this profile right now.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAvailability = async () => {
+    setLoadingAvailability(true);
+    setAvailabilityError("");
+    try {
+      const res = await api.get(
+        `/teacher-availability/student/${teacherId}/${studentProfileId}`
+      );
+      setAvailableSlots((res.data || []).filter((s) => s.available && !s.booked));
+    } catch (err) {
+      console.log(err);
+      setAvailabilityError("Unable to load this educator's availability.");
+    } finally {
+      setLoadingAvailability(false);
     }
   };
 
@@ -145,6 +192,20 @@ function TeacherPublicProfilePage() {
       setReportBusy(false);
     }
   };
+
+  // Group upcoming slots by date, cap the preview to the next 5 days that
+  // actually have availability so the profile page doesn't turn into a
+  // full booking calendar — that's what StudentSlotBookingPage is for.
+  const groupedAvailability = availableSlots.reduce((map, slot) => {
+    const date = slot.startTime.substring(0, 10);
+    if (!map[date]) map[date] = [];
+    map[date].push(slot);
+    return map;
+  }, {});
+
+  const previewDates = Object.keys(groupedAvailability)
+    .sort()
+    .slice(0, 5);
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-950 dark:bg-[#06070B] dark:text-white antialiased relative overflow-hidden">
@@ -272,6 +333,61 @@ function TeacherPublicProfilePage() {
                 </div>
               )}
             </div>
+
+            {/* Availability Preview — students only, read-only, no booking here */}
+            {isStudent && (
+              <div className="relative">
+                <div className="flex items-center gap-2">
+                  <IconCalendar className="h-4 w-4 text-slate-400" />
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    Check Availability
+                  </p>
+                </div>
+
+                {loadingAvailability && (
+                  <p className="mt-3 text-xs font-semibold text-slate-400 animate-pulse">
+                    Loading availability…
+                  </p>
+                )}
+
+                {!loadingAvailability && availabilityError && (
+                  <p className="mt-3 text-xs font-semibold text-rose-500 dark:text-rose-400">
+                    {availabilityError}
+                  </p>
+                )}
+
+                {!loadingAvailability && !availabilityError && previewDates.length === 0 && (
+                  <p className="mt-3 text-xs font-medium text-slate-400 dark:text-slate-500">
+                    This educator hasn't opened up any availability yet.
+                  </p>
+                )}
+
+                {!loadingAvailability && !availabilityError && previewDates.length > 0 && (
+                  <div className="mt-3 space-y-3">
+                    {previewDates.map((date) => (
+                      <div key={date}>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          {formatDayLabel(date)}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {groupedAvailability[date].map((slot) => (
+                            <span
+                              key={slot.id}
+                              className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+                            >
+                              {formatTime(slot.startTime)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                      Exact slot booking happens after your session request is accepted.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Core Operation Intent CTA Trigger Button */}
             {isStudent && (

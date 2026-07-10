@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import AvailabilityCalendar from "../components/availability/AvailabilityCalendar";
@@ -26,8 +26,13 @@ function TeacherAvailabilityPage() {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
+  // Tracks the previous selectedDate so we only clear selections on an
+  // actual date *change*, not on the initial mount (when it goes null -> first date).
+  const previousDateRef = useRef(null);
+
   useEffect(() => {
     loadSlots();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSlots = async () => {
@@ -70,10 +75,18 @@ function TeacherAvailabilityPage() {
   const saveAvailability = async () => {
     try {
       setSaving(true);
+
+      const todayStr = new Date().toISOString().substring(0, 10);
+
       const availableIds = [];
 
       slots.forEach((slot) => {
         if (slot.booked) return;
+
+        // Safety net: never let a slot dated before today reach the
+        // payload, even if a stale id is somehow still in selectedSlots.
+        const slotDateStr = slot.startTime.substring(0, 10);
+        if (slotDateStr < todayStr) return;
 
         const shouldBeAvailable = selectedSlots.includes(slot.id)
           ? !slot.available
@@ -83,7 +96,7 @@ function TeacherAvailabilityPage() {
           availableIds.push(slot.id);
         }
       });
-      console.log("Available IDs:", availableIds);
+
       await api.put(`/teacher-availability/available/${profileId}`, availableIds);
 
       await loadSlots();
@@ -101,29 +114,21 @@ function TeacherAvailabilityPage() {
   };
 
   const handleCancelBookedSlot = async (slotId) => {
-    try {
-      setCancellingSlotId(slotId);
-      const res = await api.put(`/teacher-availability/cancel/${profileId}`, [slotId]);
-      await loadSlots();
-
-      if (res.data === true) {
-        alert("Session cancelled and slots are now unavailable.");
-      } else {
-        alert(
-          "The cancellation didn't go through. This usually means the slot no longer matches an active session, or something changed since the page loaded. Please refresh and try again."
-        );
-      }
-    } catch (error) {
-      if (error.response?.data) {
-        alert(error.response.data);
-      } else {
-        alert("Failed to cancel this session.");
-      }
-    } finally {
-      setCancellingSlotId(null);
+  try {
+    setCancellingSlotId(slotId);
+    await api.put(`/teacher-availability/cancel/${profileId}`, [slotId]);
+    await loadSlots();
+    alert("Session cancelled and slots are now unavailable.");
+  } catch (error) {
+    if (typeof error.response?.data === "string") {
+      alert(error.response.data);
+    } else {
+      alert("Failed to cancel this session.");
     }
-  };
-
+  } finally {
+    setCancellingSlotId(null);
+  }
+};
   const groupedSlots = useMemo(() => {
     const map = {};
     slots.forEach((slot) => {
@@ -136,12 +141,32 @@ function TeacherAvailabilityPage() {
     return map;
   }, [slots]);
 
+  // Default date: earliest date that is today or later, not just
+  // whichever date happened to come first in the raw slots array.
   useEffect(() => {
-    const dates = Object.keys(groupedSlots);
-    if (dates.length > 0 && !selectedDate) {
-      setSelectedDate(dates[0]);
-    }
+    if (selectedDate) return;
+
+    const dates = Object.keys(groupedSlots).sort();
+    if (dates.length === 0) return;
+
+    const todayStr = new Date().toISOString().substring(0, 10);
+    const nextAvailable = dates.find((d) => d >= todayStr);
+
+    const initialDate = nextAvailable || dates[dates.length - 1];
+    previousDateRef.current = initialDate;
+    setSelectedDate(initialDate);
   }, [groupedSlots, selectedDate]);
+
+  // Clear any selected (but unsaved) slot toggles whenever the viewed
+  // date actually changes, so switching dates never carries stale
+  // selections from a previous date into the next save.
+  useEffect(() => {
+    if (selectedDate === null) return;
+    if (previousDateRef.current === selectedDate) return;
+
+    previousDateRef.current = selectedDate;
+    setSelectedSlots([]);
+  }, [selectedDate]);
 
   const monthName = currentMonth.toLocaleString("default", { month: "long" });
   const year = currentMonth.getFullYear();

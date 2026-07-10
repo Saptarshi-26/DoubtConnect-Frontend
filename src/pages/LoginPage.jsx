@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api/axios";
+import { GoogleLogin } from "@react-oauth/google";
 
 function IconUser(props) {
   return (
@@ -29,6 +30,30 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const routeByRole = (role) => {
+    switch (role) {
+      case "ADMIN":
+        navigate("/admin");
+        break;
+      case "STUDENT":
+        navigate("/student");
+        break;
+      case "TEACHER":
+        navigate("/teacher");
+        break;
+      default:
+        navigate("/");
+    }
+  };
+
+  const storeSession = (data) => {
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("profileId", data.profileId);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,28 +66,35 @@ function LoginPage() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("username", res.data.username);
-      localStorage.setItem("profileId", res.data.profileId);
-
-      switch (res.data.role) {
-        case "ADMIN":
-          navigate("/admin");
-          break;
-        case "STUDENT":
-          navigate("/student");
-          break;
-        case "TEACHER":
-          navigate("/teacher");
-          break;
-        default:
-          navigate("/");
-      }
+      storeSession(res.data);
+      routeByRole(res.data.role);
     } catch (err) {
       alert("Invalid username or password");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setGoogleLoading(true);
+
+      const res = await api.post("/auth/google-login", {
+        googleIdToken: credentialResponse.credential,
+      });
+
+      storeSession(res.data);
+      routeByRole(res.data.role);
+    } catch (err) {
+      // Backend returns 404 (not 401) when the Google account
+      // isn't registered yet — send them to sign up in that case.
+      if (err.response?.status === 404) {
+        navigate("/signup");
+      } else {
+        alert("Google login failed.");
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -120,7 +152,7 @@ function LoginPage() {
           </h2>
 
           <p className="mt-3 leading-6 text-slate-500 dark:text-slate-400">
-            Students, Educators and Admins can sign in here.
+            Students and educators sign in with Google. Admin and test accounts use username &amp; password.
           </p>
 
           <div className="relative mt-9">
@@ -167,6 +199,21 @@ function LoginPage() {
               "Login"
             )}
           </button>
+
+          <div className="my-6 flex items-center">
+            <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+            <span className="mx-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              OR
+            </span>
+            <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+          </div>
+
+          <div className={googleLoading ? "pointer-events-none opacity-60" : ""}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => alert("Google login failed.")}
+            />
+          </div>
 
           <p className="mt-6 text-center text-slate-500 dark:text-slate-400">
             Don't have an account?{" "}

@@ -36,6 +36,7 @@ import AdminTestDataPage from "./pages/AdminTestDataPage";
 
 import { ThemeProvider } from "./context/ThemeContext";
 import ThemeToggle from "./context/ThemeToggle";
+import TestTeachersPage from "./pages/TestTeachersPage";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
           <Route path="/admin/students" element={<AdminStudentsPage />} />
           <Route path="/admin/reports" element={<AdminReportsPage />} />
           <Route path="/admin/test-data" element={<AdminTestDataPage />} />
+<Route path="/test-teachers" element={<TestTeachersPage />} />
 
         </Routes>
 
