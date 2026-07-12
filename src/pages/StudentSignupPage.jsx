@@ -118,7 +118,7 @@ function StudentSignupPage() {
           {/* Google verification moved above the fields — it's the identity source */}
           <div className="mt-8">
             {googleVerified ? (
-              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/[0.02] py-4 text-center font-extrabold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
+              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/5 dark:border-emerald-400/60 dark:bg-emerald-500/10 py-4 text-center font-extrabold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
                 ✓ Verified: {googleEmail}
               </div>
             ) : (
@@ -151,7 +151,7 @@ function StudentSignupPage() {
               value={formData.language}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 focus:border-amber-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-amber-400 disabled:opacity-50"
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-amber-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-amber-400 disabled:opacity-50"
             />
 
             <input
@@ -161,7 +161,7 @@ function StudentSignupPage() {
               value={formData.grade}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 focus:border-amber-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-amber-400 disabled:opacity-50"
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-amber-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-amber-400 disabled:opacity-50"
             />
 
             <input
@@ -171,25 +171,25 @@ function StudentSignupPage() {
               value={formData.board}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 focus:border-amber-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-amber-400 disabled:opacity-50"
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-bold text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-amber-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-amber-400 disabled:opacity-50"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || !googleVerified}
-            className="mt-6 w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 py-4 font-bold text-xs uppercase tracking-wider text-slate-950 transition-all duration-300 hover:opacity-95 hover:shadow-lg hover:shadow-orange-500/10 dark:from-amber-400 dark:to-orange-400 disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 dark:disabled:from-white/5 dark:disabled:to-white/5 dark:disabled:text-slate-600 shadow-sm"
+            className="mt-6 w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 py-4 font-bold text-xs uppercase tracking-wider text-slate-950 transition-all duration-300 hover:opacity-95 hover:shadow-lg hover:shadow-orange-500/10 dark:from-amber-400 dark:to-orange-400 disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 dark:disabled:from-white/10 dark:disabled:to-white/10 dark:disabled:text-slate-500 shadow-sm"
           >
             {loading ? "Creating Account..." : "Create Student Account"}
           </button>
 
           {!googleVerified && (
-            <p className="mt-3 text-center text-xs font-bold text-orange-500/90 tracking-wide">
+            <p className="mt-3 text-center text-xs font-bold text-orange-500/90 dark:text-orange-400 tracking-wide">
               Verify your Google email before creating your account.
             </p>
           )}
 
-          <p className="mt-6 text-center text-sm font-semibold text-slate-500">
+          <p className="mt-6 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
             <Link
               to="/login"

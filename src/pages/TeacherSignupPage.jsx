@@ -159,7 +159,7 @@ function TeacherSignupPage() {
           {/* Google verification first — everything below depends on it */}
           <div className="mt-8">
             {googleVerified ? (
-              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/[0.02] py-4 text-center font-bold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
+              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/5 dark:border-emerald-400/60 dark:bg-emerald-500/10 py-4 text-center font-bold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
                 ✓ Verified: {googleEmail}
               </div>
             ) : (
@@ -191,7 +191,7 @@ function TeacherSignupPage() {
               value={formData.language}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-violet-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-violet-400 disabled:opacity-50"
             />
 
             <textarea
@@ -201,16 +201,16 @@ function TeacherSignupPage() {
               value={formData.bio}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full resize-none rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
+              className="w-full resize-none rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-violet-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-violet-400 disabled:opacity-50"
             />
 
-            <div className={`w-full rounded-xl border-2 border-slate-300 p-3 transition bg-slate-50/50 focus-within:border-violet-500 focus-within:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:focus-within:border-violet-400 ${!googleVerified ? "opacity-50 pointer-events-none" : ""}`}>
+            <div className={`w-full rounded-xl border-2 border-slate-300 p-3 transition bg-slate-50/50 focus-within:border-violet-500 dark:border-white/15 dark:bg-white/[0.06] dark:focus-within:border-violet-400 ${!googleVerified ? "opacity-50 pointer-events-none" : ""}`}>
               {subjects.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-2">
                   {subjects.map((subject, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300 px-3 py-1.5 text-xs font-bold"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300 px-3 py-1.5 text-xs font-bold"
                     >
                       {subject}
                       <button
@@ -233,7 +233,7 @@ function TeacherSignupPage() {
                   onChange={(e) => setSubjectInput(e.target.value)}
                   onKeyDown={handleSubjectKeyDown}
                   disabled={!googleVerified}
-                  className="flex-1 bg-transparent outline-none font-medium text-sm dark:text-white min-w-0"
+                  className="flex-1 bg-transparent outline-none font-medium text-sm text-slate-950 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 min-w-0"
                 />
                 <button
                   type="button"
@@ -253,25 +253,25 @@ function TeacherSignupPage() {
               value={formData.ratePerThirtyMin}
               onChange={handleChange}
               disabled={!googleVerified}
-              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 focus:border-violet-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:focus:border-violet-400 disabled:opacity-50"
+              className="w-full rounded-xl border-2 border-slate-300 p-4 outline-none font-medium text-sm transition bg-slate-50/50 placeholder:text-slate-400 focus:border-violet-500 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-violet-400 disabled:opacity-50"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || !googleVerified}
-            className="mt-6 w-full rounded-xl bg-slate-950 py-4 font-bold text-xs uppercase tracking-wider text-white transition hover:bg-violet-600 dark:bg-white dark:text-slate-950 dark:hover:bg-violet-400 dark:hover:text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-white/5 dark:disabled:text-slate-600 shadow-sm"
+            className="mt-6 w-full rounded-xl bg-slate-950 py-4 font-bold text-xs uppercase tracking-wider text-white transition hover:bg-violet-600 dark:bg-white dark:text-slate-950 dark:hover:bg-violet-400 dark:hover:text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-white/10 dark:disabled:text-slate-500 shadow-sm"
           >
             {loading ? "Creating Account..." : "Create Teacher Account"}
           </button>
 
           {!googleVerified && (
-            <p className="mt-3 text-center text-xs font-semibold text-slate-500">
+            <p className="mt-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
               Verify your Google email before creating your account.
             </p>
           )}
 
-          <p className="mt-6 text-center text-sm font-medium text-slate-500">
+          <p className="mt-6 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
             <Link
               to="/login"
