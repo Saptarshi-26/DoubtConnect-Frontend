@@ -42,14 +42,17 @@ function RolePath({ icon, eyebrow, title, description, features, accent, onClick
     indigo: {
       ring: "hover:border-indigo-400 dark:hover:border-indigo-400/60",
       iconWrap: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400",
-      check: "bg-indigo-500 text-white dark:bg-indigo-500/20 dark:text-indigo-400",
+      // Solid accent + white icon in both themes — a tinted bg with a
+      // tinted icon on top of it (the old dark: pairing) has too little
+      // contrast to read as a checkmark.
+      check: "bg-indigo-500 text-white dark:bg-indigo-500",
       cta: "text-indigo-600 dark:text-indigo-400",
       glow: "group-hover:bg-indigo-200/50 dark:group-hover:bg-indigo-500/10",
     },
     emerald: {
       ring: "hover:border-emerald-400 dark:hover:border-emerald-400/60",
       iconWrap: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400",
-      check: "bg-emerald-500 text-white dark:bg-emerald-500/20 dark:text-emerald-400",
+      check: "bg-emerald-500 text-white dark:bg-emerald-500",
       cta: "text-emerald-600 dark:text-emerald-400",
       glow: "group-hover:bg-emerald-200/50 dark:group-hover:bg-emerald-500/10",
     },

@@ -192,7 +192,7 @@ function TeacherAvailabilityPage() {
         {/* Header Block Section */}
         <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 dark:border-white/10 pb-6">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/80 dark:border-white/20 dark:bg-white/5 backdrop-blur-sm px-3 py-1 text-xs font-semibold tracking-wide text-emerald-700 dark:text-emerald-400 shadow-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/80 dark:border-white/20 dark:bg-white/[0.06] backdrop-blur-sm px-3 py-1 text-xs font-semibold tracking-wide text-emerald-700 dark:text-emerald-400 shadow-sm dark:shadow-none">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />
               Availability Engine
             </div>
@@ -206,7 +206,7 @@ function TeacherAvailabilityPage() {
         </div>
 
         {/* Master Toolbar Wrapper */}
-        <div className="mt-8 rounded-3xl border-2 border-slate-300 bg-white p-4 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm">
+        <div className="mt-8 rounded-3xl border-2 border-slate-300 bg-white p-4 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm dark:shadow-none">
           <AvailabilityToolbar
             generating={generating}
             saving={saving}
@@ -218,14 +218,14 @@ function TeacherAvailabilityPage() {
 
         {/* Conditional Core Layout Workspace */}
         {loading ? (
-          <div className="py-32 text-center text-sm font-bold uppercase tracking-wider text-slate-400 animate-pulse">
+          <div className="py-32 text-center text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 animate-pulse">
             Synchronizing calendar timeline configurations...
           </div>
         ) : (
           <div className="mt-8 grid gap-8 lg:grid-cols-[400px_1fr] items-start">
             
             {/* Calendar Card Component Frame */}
-            <div className="rounded-3xl border-2 border-slate-300 bg-white p-6 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm group relative overflow-hidden">
+            <div className="rounded-3xl border-2 border-slate-300 bg-white p-6 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm dark:shadow-none group relative overflow-hidden">
               <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full blur-3xl transition-colors duration-300 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-500/5 pointer-events-none" />
               <div className="relative">
                 <AvailabilityCalendar
@@ -239,7 +239,7 @@ function TeacherAvailabilityPage() {
             </div>
 
             {/* Selected Coordinates SlotList Frame */}
-            <div className="rounded-3xl border-2 border-slate-300 bg-white p-6 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm group relative overflow-hidden">
+            <div className="rounded-3xl border-2 border-slate-300 bg-white p-6 dark:bg-[#0C0E14] dark:border-white/20 shadow-sm dark:shadow-none group relative overflow-hidden">
               <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full blur-3xl transition-colors duration-300 group-hover:bg-teal-50/50 dark:group-hover:bg-teal-500/5 pointer-events-none" />
               <div className="relative">
                 <SlotList

@@ -42,31 +42,31 @@ function AvailabilityCalendar({
   };
 
   return (
-    <div className="rounded-3xl bg-white p-8 shadow-xl">
+    <div className="rounded-3xl bg-white dark:bg-[#0C0E14] dark:border dark:border-white/10 p-8 shadow-xl dark:shadow-none">
 
       <div className="mb-8 flex items-center justify-between">
 
         <button
           onClick={previousMonth}
-          className="rounded-xl p-2 transition hover:bg-slate-100"
+          className="rounded-xl p-2 text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10"
         >
           <ChevronLeft size={22} />
         </button>
 
-        <h2 className="text-2xl font-bold text-slate-900">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
           {monthTitle}
         </h2>
 
         <button
           onClick={nextMonth}
-          className="rounded-xl p-2 transition hover:bg-slate-100"
+          className="rounded-xl p-2 text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10"
         >
           <ChevronRight size={22} />
         </button>
 
       </div>
 
-      <div className="mb-5 grid grid-cols-7 text-center text-sm font-semibold text-slate-500">
+      <div className="mb-5 grid grid-cols-7 text-center text-sm font-semibold text-slate-500 dark:text-slate-400">
 
         <div>Sun</div>
         <div>Mon</div>
@@ -116,8 +116,8 @@ const key =
 
               ${
                 isSelected
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-blue-300"
+                  ? "border-blue-600 bg-blue-50 dark:border-blue-400 dark:bg-blue-500/10"
+                  : "border-slate-200 bg-white hover:border-blue-300 dark:border-white/10 dark:bg-white/[0.02] dark:hover:border-blue-400/60"
               }
 
               `}
@@ -126,11 +126,11 @@ const key =
               <div className="mt-2 flex justify-center">
 
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-full
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-slate-900 dark:text-white
 
                   ${
                     isToday
-                      ? "bg-blue-600 text-white"
+                      ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white"
                       : ""
                   }
 
@@ -144,11 +144,11 @@ const key =
               <div className="mt-2 flex justify-center">
 
                 {hasBooked ? (
-                  <div className="h-2 w-2 rounded-full bg-red-500" />
+                  <div className="h-2 w-2 rounded-full bg-red-500 dark:bg-red-400" />
                 ) : hasAvailable ? (
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
+                  <div className="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400" />
                 ) : (
-                  <div className="h-2 w-2 rounded-full bg-slate-300" />
+                  <div className="h-2 w-2 rounded-full bg-slate-300 dark:bg-white/15" />
                 )}
 
               </div>

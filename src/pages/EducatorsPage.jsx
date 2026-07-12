@@ -295,11 +295,11 @@ setTestEducatorIds(testIds);
   return (
     <div className="min-h-screen bg-slate-100">
 
-      <div className="mx-auto max-w-7xl px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 py-12">
 
         <div className="mb-12">
 
-          <h1 className="text-5xl font-bold text-slate-800">
+          <h1 className="text-4xl sm:text-5xl font-bold text-slate-800">
             Find an Educator
           </h1>
 
@@ -308,8 +308,8 @@ setTestEducatorIds(testIds);
             Browse profiles, compare expertise and start learning.
           </p>
 
-          <div className="mt-8 flex max-w-xl gap-3">
-            <div className="relative flex-1">
+          <div className="mt-8 flex flex-wrap items-stretch max-w-xl gap-3">
+            <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
               <IconSearch className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <input
                 value={subjectQuery}
@@ -323,7 +323,7 @@ setTestEducatorIds(testIds);
             <button
               onClick={handleSearch}
               disabled={searching || !subjectQuery.trim()}
-              className="rounded-2xl bg-blue-600 px-6 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="rounded-2xl bg-blue-600 px-6 py-3.5 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-400"
             >
               {searching ? "Searching..." : "Search"}
             </button>
@@ -331,7 +331,7 @@ setTestEducatorIds(testIds);
             {searchActive && (
               <button
                 onClick={handleClearSearch}
-                className="flex items-center gap-1.5 rounded-2xl border border-slate-300 px-5 font-medium text-slate-700 transition hover:bg-slate-100"
+                className="flex items-center gap-1.5 rounded-2xl border border-slate-300 px-5 py-3.5 font-medium text-slate-700 transition hover:bg-slate-100"
               >
                 <IconX className="h-4 w-4" />
                 Clear
@@ -341,7 +341,7 @@ setTestEducatorIds(testIds);
             {isStudent && (
               <button
                 onClick={handleToggleFavouritesOnly}
-                className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 font-medium transition ${
+                className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 py-3.5 font-medium transition ${
                   showFavouritesOnly
                     ? "border-red-200 bg-red-50 text-red-600"
                     : "border-slate-300 text-slate-700 hover:bg-slate-100"
@@ -356,7 +356,7 @@ setTestEducatorIds(testIds);
               <button
                 onClick={handleToggleTestEducators}
                 disabled={loadingTestEducators}
-                className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 font-medium transition disabled:cursor-not-allowed ${
+                className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 py-3.5 font-medium transition disabled:cursor-not-allowed ${
                   showTestEducators
                     ? "border-purple-200 bg-purple-50 text-purple-600"
                     : "border-slate-300 text-slate-700 hover:bg-slate-100"
