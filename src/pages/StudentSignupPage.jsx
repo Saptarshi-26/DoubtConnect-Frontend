@@ -55,8 +55,20 @@ function StudentSignupPage() {
     try {
       setLoading(true);
       const res = await api.post("/auth/signup", payload);
-      alert(res.data.message ?? "Successfully registered.");
-      navigate("/login");
+
+      const { token, role, username, profileId } = res.data;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("username", username);
+        if (profileId) localStorage.setItem("profileId", profileId);
+
+        navigate("/student");
+      } else {
+        alert(res.data.message ?? "Successfully registered.");
+        navigate("/login");
+      }
     } catch (err) {
       alert(err.response?.data?.message ?? "Registration failed.");
     } finally {
@@ -67,11 +79,9 @@ function StudentSignupPage() {
   return (
     <div className="min-h-screen flex bg-[#FDFBF7] dark:bg-[#070610] text-slate-950 dark:text-white antialiased selection:bg-amber-500 selection:text-slate-950 relative overflow-hidden">
 
-      {/* Dynamic sunset-hued vibrant background lighting waves */}
       <div className="absolute top-[-10%] left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-amber-200 to-orange-300 opacity-40 dark:from-amber-500/10 dark:to-orange-500/5 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-indigo-200 to-purple-300 opacity-40 dark:from-indigo-500/10 dark:to-purple-500/5 rounded-full blur-[110px] pointer-events-none" />
 
-      {/* Left Block Side Panel */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#0F1026] via-[#15173C] to-[#0A0B1A] text-white items-center justify-center p-16 border-r-2 border-amber-500/10 relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(245,158,11,0.12),transparent_60%)] pointer-events-none" />
         <div className="max-w-md relative z-10">
@@ -92,7 +102,6 @@ function StudentSignupPage() {
         </div>
       </div>
 
-      {/* Right Input Panel */}
       <div className="flex flex-1 items-center justify-center p-6 sm:p-8 relative z-10">
 
         <form
@@ -115,7 +124,6 @@ function StudentSignupPage() {
             Verify your Google email, then just a few details to get started.
           </p>
 
-          {/* Google verification moved above the fields — it's the identity source */}
           <div className="mt-8">
             {googleVerified ? (
               <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/5 dark:border-emerald-400/60 dark:bg-emerald-500/10 py-4 text-center font-extrabold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">

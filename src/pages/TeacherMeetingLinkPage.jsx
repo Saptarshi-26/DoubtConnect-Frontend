@@ -13,6 +13,25 @@ function IconArrowLeft(props) {
   );
 }
 
+// Prepends https:// if the user pasted a bare domain (e.g. what Google
+// Meet gives you: "meet.google.com/xxx-xxxx-xxx" with no scheme).
+function normalizeUrl(input) {
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+function isValidUrl(input) {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(normalizeUrl(input));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function TeacherMeetingLinkPage() {
   const navigate = useNavigate();
   const teacherProfileId = localStorage.getItem("profileId");
@@ -47,17 +66,28 @@ function TeacherMeetingLinkPage() {
     e.preventDefault();
     setError("");
 
-    if (!meetingLink.trim()) {
+    const raw = meetingLink.trim();
+
+    if (!raw) {
       setError("Please enter your meeting link.");
       return;
     }
+
+    if (!isValidUrl(raw)) {
+      setError("That doesn't look like a valid link. Please check and try again.");
+      return;
+    }
+
+    const normalized = normalizeUrl(raw);
 
     setSaving(true);
     try {
       await api.post(`/teacher-meeting/${teacherProfileId}`, {
         meetingPlatform,
-        meetingLink: meetingLink.trim(),
+        meetingLink: normalized,
       });
+      // Reflect the normalized value back in the field in case save fails downstream
+      setMeetingLink(normalized);
       navigate("/teacher-availability");
     } catch (err) {
       setError(
@@ -129,13 +159,26 @@ function TeacherMeetingLinkPage() {
                     Meeting Destination Link
                   </label>
                   <input
-                    type="url"
+                    type="text"
+                    inputMode="url"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                     value={meetingLink}
                     onChange={(e) => setMeetingLink(e.target.value)}
-                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                    onBlur={(e) => {
+                      const v = e.target.value.trim();
+                      if (v && isValidUrl(v)) {
+                        setMeetingLink(normalizeUrl(v));
+                      }
+                    }}
+                    placeholder="meet.google.com/xxx-xxxx-xxx"
                     className="mt-1.5 w-full rounded-xl border-2 border-slate-300 p-3.5 outline-none font-bold text-sm transition bg-slate-50/50 focus:border-amber-500 focus:bg-white dark:border-white/10 dark:bg-white/[0.02] dark:text-white dark:placeholder:text-slate-600 dark:focus:border-amber-400"
                     required
                   />
+                  <p className="mt-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                    You can paste the link exactly as Google/Zoom/Teams gives it — no need to add "https://" yourself.
+                  </p>
                 </div>
 
                 {error && (

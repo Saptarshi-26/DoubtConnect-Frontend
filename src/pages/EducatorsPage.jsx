@@ -293,37 +293,37 @@ setTestEducatorIds(testIds);
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
 
       <div className="mx-auto max-w-7xl px-4 sm:px-8 py-12">
 
         <div className="mb-12">
 
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-800">
+          <h1 className="text-4xl sm:text-5xl font-bold text-slate-800 dark:text-slate-100">
             Find an Educator
           </h1>
 
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-500">
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-500 dark:text-slate-400">
             Learn from experienced educators whenever you need help.
             Browse profiles, compare expertise and start learning.
           </p>
 
           <div className="mt-8 flex flex-wrap items-stretch max-w-xl gap-3">
             <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
-              <IconSearch className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+              <IconSearch className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={subjectQuery}
                 onChange={(e) => setSubjectQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Search by subject, e.g. Physics"
-                className="w-full rounded-2xl border border-slate-300 bg-white py-3.5 pl-12 pr-4 outline-none transition focus:border-blue-500"
+                className="w-full rounded-2xl border border-slate-300 bg-white py-3.5 pl-12 pr-4 outline-none transition focus:border-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-400"
               />
             </div>
 
             <button
               onClick={handleSearch}
               disabled={searching || !subjectQuery.trim()}
-              className="rounded-2xl bg-blue-600 px-6 py-3.5 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="rounded-2xl bg-blue-600 px-6 py-3.5 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-400 dark:disabled:bg-slate-700"
             >
               {searching ? "Searching..." : "Search"}
             </button>
@@ -331,7 +331,7 @@ setTestEducatorIds(testIds);
             {searchActive && (
               <button
                 onClick={handleClearSearch}
-                className="flex items-center gap-1.5 rounded-2xl border border-slate-300 px-5 py-3.5 font-medium text-slate-700 transition hover:bg-slate-100"
+                className="flex items-center gap-1.5 rounded-2xl border border-slate-300 px-5 py-3.5 font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 <IconX className="h-4 w-4" />
                 Clear
@@ -343,8 +343,8 @@ setTestEducatorIds(testIds);
                 onClick={handleToggleFavouritesOnly}
                 className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 py-3.5 font-medium transition ${
                   showFavouritesOnly
-                    ? "border-red-200 bg-red-50 text-red-600"
-                    : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                    ? "border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400"
+                    : "border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                 }`}
               >
                 <IconHeart filled={showFavouritesOnly} className="h-4 w-4" />
@@ -358,8 +358,8 @@ setTestEducatorIds(testIds);
                 disabled={loadingTestEducators}
                 className={`flex shrink-0 items-center gap-1.5 rounded-2xl border px-5 py-3.5 font-medium transition disabled:cursor-not-allowed ${
                   showTestEducators
-                    ? "border-purple-200 bg-purple-50 text-purple-600"
-                    : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                    ? "border-purple-200 bg-purple-50 text-purple-600 dark:border-purple-800 dark:bg-purple-900/20 dark:text-purple-400"
+                    : "border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                 }`}
               >
                 <IconFlask className="h-4 w-4" />
@@ -369,15 +369,15 @@ setTestEducatorIds(testIds);
           </div>
 
           {showTestEducators && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-purple-50 px-4 py-2.5">
-              <p className="text-sm text-purple-700">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-purple-50 px-4 py-2.5 dark:bg-purple-900/20">
+              <p className="text-sm text-purple-700 dark:text-purple-300">
                 You're browsing demo educators. You can request sessions
                 and favourite them just like real educators — this is
                 just for exploring the app.
               </p>
               <button
                 onClick={handleToggleTestEducators}
-                className="shrink-0 rounded-lg bg-purple-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-purple-500"
+                className="shrink-0 rounded-lg bg-purple-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-purple-500 dark:bg-purple-700 dark:hover:bg-purple-600"
               >
                 ← Back to Educators
               </button>
@@ -385,7 +385,7 @@ setTestEducatorIds(testIds);
           )}
 
           {searchError && (
-            <p className="mt-3 text-sm text-red-500">{searchError}</p>
+            <p className="mt-3 text-sm text-red-500 dark:text-red-400">{searchError}</p>
           )}
 
         </div>
@@ -393,14 +393,14 @@ setTestEducatorIds(testIds);
 
         {loading ? (
 
-          <div className="py-24 text-center text-slate-500 text-lg">
+          <div className="py-24 text-center text-slate-500 dark:text-slate-400 text-lg">
             Loading educators...
           </div>
 
         ) : educators.length === 0 ? (
 
-          <div className="rounded-3xl bg-white py-24 text-center shadow-sm">
-            <p className="text-lg font-semibold text-slate-700">
+          <div className="rounded-3xl bg-white py-24 text-center shadow-sm dark:bg-slate-800">
+            <p className="text-lg font-semibold text-slate-700 dark:text-slate-200">
               {showTestEducators
                 ? "No test educators found"
                 : showFavouritesOnly
@@ -418,7 +418,7 @@ setTestEducatorIds(testIds);
                     ? handleToggleFavouritesOnly
                     : handleClearSearch
                 }
-                className="mt-4 font-semibold text-blue-600 hover:underline"
+                className="mt-4 font-semibold text-blue-600 hover:underline dark:text-blue-400"
               >
                 {showTestEducators || showFavouritesOnly
                   ? "Browse all educators"
@@ -436,14 +436,14 @@ setTestEducatorIds(testIds);
 
               <div
                 key={educator.id}
-                className="relative rounded-3xl bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="relative rounded-3xl bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-slate-800 dark:shadow-none dark:hover:shadow-slate-900/50"
               >
 
                 {isStudent && (
                   <button
                     onClick={() => toggleFavourite(educator.id)}
                     disabled={favouriteBusyId === educator.id}
-                    className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm transition hover:bg-red-50 disabled:opacity-50"
+                    className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm transition hover:bg-red-50 disabled:opacity-50 dark:bg-slate-700/90 dark:text-red-400 dark:hover:bg-red-900/30"
                   >
                     <IconHeart
                       filled={favouriteIds.has(educator.id)}
@@ -463,21 +463,21 @@ setTestEducatorIds(testIds);
                       "https://placehold.co/100x100?text=👤"
                     }
                     alt={educator.name}
-                    className="h-20 w-20 rounded-full object-cover border"
+                    className="h-20 w-20 rounded-full object-cover border dark:border-slate-600"
                   />
 
                   <div className="flex-1 min-w-0">
 
-                    <h2 className="text-xl font-bold leading-tight text-slate-800 break-words hover:underline">
+                    <h2 className="text-xl font-bold leading-tight text-slate-800 break-words hover:underline dark:text-slate-100">
                       {educator.name}
                     </h2>
 
-                   <p className="mt-1 text-slate-500">
+                   <p className="mt-1 text-slate-500 dark:text-slate-400">
   {educator.language}
 </p>
 
 {educator.paymentMethod && (
-  <span className="mt-2 inline-block rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">
+  <span className="mt-2 inline-block rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
     💳 Accepts {educator.paymentMethod === "BANK" ? "Bank Transfer" : educator.paymentMethod}
   </span>
 )}
@@ -488,7 +488,7 @@ setTestEducatorIds(testIds);
 
                 <div className="mt-7">
 
-                  <p className="font-semibold text-slate-700">
+                  <p className="font-semibold text-slate-700 dark:text-slate-200">
                     Subjects
                   </p>
 
@@ -497,7 +497,7 @@ setTestEducatorIds(testIds);
                     {educator.subjects?.map((subject) => (
                       <span
                         key={subject}
-                        className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+                        className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                       >
                         {subject}
                       </span>
@@ -507,17 +507,17 @@ setTestEducatorIds(testIds);
 
                 </div>
 
-                <p className="mt-7 line-clamp-3 leading-7 text-slate-600">
+                <p className="mt-7 line-clamp-3 leading-7 text-slate-600 dark:text-slate-300">
                   {educator.bio}
                 </p>                <div className="mt-8 flex items-center justify-between">
 
                   <div>
 
-                    <p className="text-lg font-semibold text-slate-800">
+                    <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">
                       ⭐ {educator.rating.toFixed(1)}
                     </p>
 
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {educator.numberOfRatings} reviews
                     </p>
 
@@ -525,11 +525,11 @@ setTestEducatorIds(testIds);
 
                   <div className="text-right">
 
-                    <p className="text-2xl font-bold text-blue-600">
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       ₹{educator.ratePerThirtyMin}
                     </p>
 
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       / 30 min
                     </p>
 
@@ -542,7 +542,7 @@ setTestEducatorIds(testIds);
   {!isAdmin && (
     <button
       onClick={() => navigate(`/session-request/${educator.id}`)}
-      className="flex-1 rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-500"
+      className="flex-1 rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-600"
     >
       Request Session
     </button>
@@ -550,7 +550,7 @@ setTestEducatorIds(testIds);
 
   <button
     onClick={() => setReviewsFor(educator)}
-    className="rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+    className="rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
   >
     Reviews
   </button>
@@ -558,7 +558,7 @@ setTestEducatorIds(testIds);
   {isAdmin && (
     <button
       onClick={() => navigate(`/educators/${educator.id}`)}
-      className="flex-1 rounded-xl border border-slate-300 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+      className="flex-1 rounded-xl border border-slate-300 py-3 font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
     >
       View Profile
     </button>
@@ -568,21 +568,21 @@ setTestEducatorIds(testIds);
                 {isAdmin && (
                   <div className="mt-3">
                     {confirmingDeleteId === educator.id ? (
-                      <div className="rounded-xl bg-red-50 p-3">
-                        <p className="text-sm text-red-700">
+                      <div className="rounded-xl bg-red-50 p-3 dark:bg-red-900/20">
+                        <p className="text-sm text-red-700 dark:text-red-400">
                           Delete this educator permanently?
                         </p>
                         <div className="mt-2 flex gap-2">
                           <button
                             onClick={() => handleDeleteEducator(educator.id)}
                             disabled={deletingId === educator.id}
-                            className="flex-1 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:bg-slate-400"
+                            className="flex-1 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:bg-slate-400 dark:disabled:bg-slate-700"
                           >
                             {deletingId === educator.id ? "Deleting..." : "Confirm Delete"}
                           </button>
                           <button
                             onClick={() => setConfirmingDeleteId(null)}
-                            className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                            className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
                           >
                             Cancel
                           </button>
@@ -591,7 +591,7 @@ setTestEducatorIds(testIds);
                     ) : (
                       <button
                         onClick={() => setConfirmingDeleteId(educator.id)}
-                        className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                        className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
                       >
                         Delete Educator
                       </button>

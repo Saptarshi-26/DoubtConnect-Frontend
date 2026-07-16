@@ -99,8 +99,20 @@ function TeacherSignupPage() {
     try {
       setLoading(true);
       const res = await api.post("/auth/signup", payload);
-      alert(res.data.message ?? "Successfully registered.");
-      navigate("/login");
+
+      const { token, role, username, profileId } = res.data;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("username", username);
+        if (profileId) localStorage.setItem("profileId", profileId);
+
+        navigate("/teacher");
+      } else {
+        alert(res.data.message ?? "Successfully registered.");
+        navigate("/login");
+      }
     } catch (err) {
       alert(err.response?.data?.message ?? "Registration failed.");
     } finally {
@@ -156,7 +168,6 @@ function TeacherSignupPage() {
             Verify with Google, then tell students a little about yourself.
           </p>
 
-          {/* Google verification first — everything below depends on it */}
           <div className="mt-8">
             {googleVerified ? (
               <div className="rounded-xl border-2 border-emerald-500 bg-emerald-500/5 dark:border-emerald-400/60 dark:bg-emerald-500/10 py-4 text-center font-bold text-sm text-emerald-600 dark:text-emerald-400 shadow-sm">
