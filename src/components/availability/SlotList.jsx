@@ -7,6 +7,12 @@ function formatTime(dateTime) {
   });
 }
 
+function isPastDateSlot(slot) {
+  const todayStr = new Date().toISOString().substring(0, 10);
+  const slotDateStr = slot.startTime.substring(0, 10);
+  return slotDateStr < todayStr;
+}
+
 function SlotList({
   selectedDate,
   groupedSlots,
@@ -92,7 +98,7 @@ function SlotList({
           </div>
         ) : (
           slots.map((slot) => {
-           
+            const isPast = !slot.booked && isPastDateSlot(slot);
 
             return (
               <div
@@ -102,6 +108,8 @@ function SlotList({
                 ${
                   slot.booked
                     ? "border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10"
+                    : isPast
+                    ? "border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[0.02] opacity-60"
                     : slot.available
                     ? "border-green-200 bg-green-50 dark:border-green-500/30 dark:bg-green-500/10"
                     : "border-slate-200 dark:border-white/10 dark:bg-white/[0.02]"
@@ -125,6 +133,8 @@ function SlotList({
 
                     {slot.booked
                       ? "Booked"
+                      : isPast
+                      ? "Past"
                       : slot.available
                       ? "Available"
                       : "Unavailable"}
@@ -149,14 +159,20 @@ function SlotList({
                 ) : (
                  <button
   onClick={() => {
-    if (!slot.booked) {
+    if (!slot.booked && !isPast) {
       toggleSlot(slot.id);
     }
   }}
-  disabled={slot.booked}
+  disabled={slot.booked || isPast}
+  title={isPast ? "Can't edit availability for a past date" : undefined}
   className="transition hover:scale-110 disabled:cursor-not-allowed disabled:hover:scale-100"
 >
-  {isChecked(slot) ? (
+  {isPast ? (
+    <Circle
+      size={30}
+      className="text-slate-300 dark:text-slate-700"
+    />
+  ) : isChecked(slot) ? (
     <CheckCircle2
       size={30}
       className="text-green-600 dark:text-green-400"

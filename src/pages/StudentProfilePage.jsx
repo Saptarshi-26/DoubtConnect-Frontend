@@ -205,7 +205,7 @@ function StudentProfilePage() {
           <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_48px_-16px_rgba(15,23,42,0.1)] dark:border-white/10 dark:bg-white/[0.03] dark:shadow-none sm:p-10">
 
             {/* Identity */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5 min-w-0">
               <div className="group relative h-20 w-20 shrink-0">
                 <img
                   src={profile.profilePictureUrl || "https://placehold.co/100x100"}
@@ -231,8 +231,8 @@ function StudentProfilePage() {
                   className="hidden"
                 />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+              <div className="min-w-0">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white truncate">
                   {profile.name}
                 </h2>
                 <p className="mt-0.5 text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
@@ -242,7 +242,7 @@ function StudentProfilePage() {
             </div>
 
             {/* Details */}
-            <div className="mt-8 flex items-center justify-between border-t-2 border-slate-100 pt-6 dark:border-white/5">
+            <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t-2 border-slate-100 pt-6 dark:border-white/5">
               <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Details
               </p>
@@ -250,7 +250,7 @@ function StudentProfilePage() {
               {!editing && (
                 <button
                   onClick={startEditing}
-                  className="flex items-center gap-1.5 text-sm font-bold text-indigo-600 transition hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                  className="inline-flex shrink-0 items-center gap-1.5 self-start text-sm font-bold text-indigo-600 transition hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >
                   <IconPencil className="h-3.5 w-3.5" />
                   Edit

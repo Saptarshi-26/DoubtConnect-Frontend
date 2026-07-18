@@ -72,21 +72,26 @@ function TeacherAvailabilityPage() {
     }
   };
 
-  const saveAvailability = async () => {
+ const saveAvailability = async () => {
     try {
       setSaving(true);
 
       const todayStr = new Date().toISOString().substring(0, 10);
 
       const availableIds = [];
+      let droppedPastSelections = 0;
 
       slots.forEach((slot) => {
         if (slot.booked) return;
 
-        // Safety net: never let a slot dated before today reach the
-        // payload, even if a stale id is somehow still in selectedSlots.
         const slotDateStr = slot.startTime.substring(0, 10);
-        if (slotDateStr < todayStr) return;
+        if (slotDateStr < todayStr) {
+          // Selection on a past-date slot should never reach the payload.
+          // Track it so we can tell the user their toggle was ignored,
+          // instead of silently claiming success.
+          if (selectedSlots.includes(slot.id)) droppedPastSelections++;
+          return;
+        }
 
         const shouldBeAvailable = selectedSlots.includes(slot.id)
           ? !slot.available
@@ -97,11 +102,23 @@ function TeacherAvailabilityPage() {
         }
       });
 
+      if (droppedPastSelections > 0 && availableIds.length === 0 && selectedSlots.length === droppedPastSelections) {
+        // Every selected slot was a past-date slot — nothing was actually saved.
+        alert("Can't update availability for past dates. No changes were made.");
+        setSelectedSlots([]);
+        return;
+      }
+
       await api.put(`/teacher-availability/available/${profileId}`, availableIds);
 
       await loadSlots();
       setSelectedSlots([]);
-      alert("Availability updated successfully.");
+
+      if (droppedPastSelections > 0) {
+        alert("Availability updated successfully. Note: past-date selections were ignored.");
+      } else {
+        alert("Availability updated successfully.");
+      }
     } catch (error) {
       if (error.response?.data) {
         alert(error.response.data);
