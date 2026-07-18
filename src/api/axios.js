@@ -9,8 +9,8 @@ const api = axios.create({
  
  baseURL: "https://doubtconnect.duckdns.org",
 });
-console.log("Axios file loaded");
-console.log("Base URL =", api.defaults.baseURL);
+//console.log("Axios file loaded");
+//console.log("Base URL =", api.defaults.baseURL);
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
