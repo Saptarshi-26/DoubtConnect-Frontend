@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import MyReviewsModal from "../components/reviews/MyReviewsModal";
@@ -50,6 +51,15 @@ function IconAlertTriangle(props) {
   );
 }
 
+function IconX(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+      strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 function StudentProfilePage() {
   const navigate = useNavigate();
   const studentProfileId = localStorage.getItem("profileId");
@@ -68,6 +78,8 @@ function StudentProfilePage() {
   const [uploadingPicture, setUploadingPicture] = useState(false);
   const fileInputRef = useRef(null);
 
+  const [showImageLightbox, setShowImageLightbox] = useState(false);
+
   useEffect(() => {
     loadProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,6 +90,24 @@ function StudentProfilePage() {
     const t = setTimeout(() => setToast(""), 3000);
     return () => clearTimeout(t);
   }, [toast]);
+
+  useEffect(() => {
+    if (!showImageLightbox) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [showImageLightbox]);
+
+  useEffect(() => {
+    if (!showImageLightbox) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setShowImageLightbox(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showImageLightbox]);
 
   const loadProfile = async () => {
     setLoading(true);
@@ -164,6 +194,8 @@ function StudentProfilePage() {
     ? [profile.grade, profile.board, profile.language].filter(Boolean)
     : [];
 
+  const hasProfilePicture = Boolean(profile?.profilePictureUrl);
+
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-950 dark:bg-slate-950 dark:text-white selection:bg-indigo-600 selection:text-white antialiased relative overflow-hidden">
 
@@ -206,21 +238,29 @@ function StudentProfilePage() {
 
             {/* Identity */}
             <div className="flex items-center gap-5 min-w-0">
-              <div className="group relative h-20 w-20 shrink-0">
-                <img
-                  src={profile.profilePictureUrl || "https://placehold.co/100x100"}
-                  alt={profile.name}
-                  className="h-20 w-20 rounded-full border-2 border-slate-100 object-cover dark:border-white/10"
-                />
+              <div className="relative h-20 w-20 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => hasProfilePicture && setShowImageLightbox(true)}
+                  className={`block h-20 w-20 rounded-full ${hasProfilePicture ? "cursor-zoom-in" : "cursor-default"}`}
+                  aria-label="View profile picture"
+                >
+                  <img
+                    src={profile.profilePictureUrl || "https://placehold.co/100x100"}
+                    alt={profile.name}
+                    className="h-20 w-20 rounded-full border-2 border-slate-100 object-cover dark:border-white/10"
+                  />
+                </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingPicture}
-                  className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-white opacity-0 transition duration-200 group-hover:bg-black/50 group-hover:opacity-100 disabled:opacity-100 disabled:bg-black/50"
+                  className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-indigo-600 text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-70 dark:border-slate-900"
+                  aria-label="Change profile picture"
                 >
                   {uploadingPicture ? (
-                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   ) : (
-                    <IconCamera className="h-6 w-6" />
+                    <IconCamera className="h-3.5 w-3.5" />
                   )}
                 </button>
                 <input
@@ -400,6 +440,34 @@ function StudentProfilePage() {
           studentId={studentProfileId}
           onClose={() => setShowMyReviews(false)}
         />
+      )}
+
+      {/* Profile picture full-screen viewer */}
+      {showImageLightbox && hasProfilePicture && createPortal(
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90"
+          onClick={() => setShowImageLightbox(false)}
+        >
+          <button
+            onClick={() => setShowImageLightbox(false)}
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+            aria-label="Close"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ width: "min(75vw, 75vh)", height: "min(75vw, 75vh)" }}
+            className="overflow-hidden rounded-full shadow-2xl ring-1 ring-white/10"
+          >
+            <img
+              src={profile.profilePictureUrl}
+              alt={profile.name}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
