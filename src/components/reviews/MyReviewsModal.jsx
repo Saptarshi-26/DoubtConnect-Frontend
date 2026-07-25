@@ -29,6 +29,14 @@ function IconInbox(props) {
   );
 }
 
+function IconStar(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 2.5l2.9 6.2 6.8.7-5.1 4.6 1.5 6.7L12 17.6l-6.1 3.1 1.5-6.7L2.3 9.4l6.8-.7L12 2.5z" />
+    </svg>
+  );
+}
+
 /**
  * Modal that fetches and displays the reviews a student has written.
  *
@@ -73,19 +81,19 @@ function MyReviewsModal({ studentId, onClose }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl"
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-[32px] bg-white p-8 shadow-2xl dark:bg-[#0C0E14] dark:border dark:border-white/10"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-lg font-bold text-slate-800">My Reviews</p>
-            <p className="text-sm text-slate-400">
+            <p className="text-lg font-bold text-slate-800 dark:text-white">My Reviews</p>
+            <p className="text-sm text-slate-400 dark:text-slate-400">
               Reviews you've written for educators
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-white/10 dark:hover:text-slate-200"
           >
             <IconX className="h-5 w-5" />
           </button>
@@ -97,25 +105,25 @@ function MyReviewsModal({ studentId, onClose }) {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-20 animate-pulse rounded-2xl bg-slate-100"
+                  className="h-20 animate-pulse rounded-2xl bg-slate-100 dark:bg-white/5"
                 />
               ))}
             </div>
           )}
 
           {!loading && loadError && (
-            <p className="rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-red-600">
+            <p className="rounded-2xl border border-red-200 bg-red-50 p-5 text-center text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
               {loadError}
             </p>
           )}
 
           {!loading && !loadError && reviews.length === 0 && (
-            <div className="flex flex-col items-center rounded-2xl bg-slate-50 p-10 text-center">
-              <IconInbox className="h-10 w-10 text-slate-300" />
-              <p className="mt-4 font-semibold text-slate-700">
+            <div className="flex flex-col items-center rounded-2xl bg-slate-50 p-10 text-center dark:bg-white/5">
+              <IconInbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
+              <p className="mt-4 font-semibold text-slate-700 dark:text-slate-200">
                 You haven't reviewed anyone yet
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 Once you rate a completed session, it'll show up here.
               </p>
             </div>
@@ -126,10 +134,33 @@ function MyReviewsModal({ studentId, onClose }) {
               {reviews.map((r, idx) => (
                 <div
                   key={r.sessionEventId ?? idx}
-                  className="rounded-2xl bg-slate-50 p-5"
+                  className="rounded-2xl bg-slate-50 p-5 dark:bg-white/5"
                 >
-                  <IconQuote className="h-5 w-5 text-amber-300" />
-                  <p className="mt-2 leading-6 text-slate-700">{r.review}</p>
+                  {typeof r.rating === "number" && (
+                    <div className="mb-2 flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <IconStar
+                          key={n}
+                          className={`h-4 w-4 ${
+                            n <= r.rating
+                              ? "text-amber-400"
+                              : "text-slate-200 dark:text-slate-700"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {r.review ? (
+                    <>
+                      <IconQuote className="h-5 w-5 text-amber-300 dark:text-amber-400/70" />
+                      <p className="mt-2 leading-6 text-slate-700 dark:text-slate-200">{r.review}</p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-sm italic leading-6 text-slate-400 dark:text-slate-500">
+                      No written review — rating only.
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

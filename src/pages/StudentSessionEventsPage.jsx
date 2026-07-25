@@ -220,6 +220,18 @@ function StudentSessionEventsPage() {
     }
   };
 
+  // Called by LeaveReviewModal after a successful submit. Marks the
+  // corresponding event as rated (locally, without a full reload) so its
+  // card flips from "Leave a Review" to "Reviewed" immediately, and closes
+  // the modal.
+  const handleReviewSubmitted = (eventId) => {
+    setEvents((prev) =>
+      prev.map((e) => (e.id === eventId ? { ...e, rated: true } : e))
+    );
+    setReviewEvent(null);
+    setToast("Review submitted.");
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAF9] text-slate-950 dark:bg-slate-950 dark:text-white selection:bg-indigo-600 selection:text-white antialiased relative overflow-hidden">
       
@@ -626,6 +638,14 @@ function StudentSessionEventsPage() {
             className="max-h-full max-w-full rounded-2xl border border-white/10 shadow-2xl"
           />
         </div>
+      )}
+
+      {reviewEvent && (
+        <LeaveReviewModal
+          event={reviewEvent}
+          onClose={() => setReviewEvent(null)}
+          onSubmitted={handleReviewSubmitted}
+        />
       )}
     </div>
   );
