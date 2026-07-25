@@ -76,7 +76,12 @@ function TeacherAvailabilityPage() {
     try {
       setSaving(true);
 
-      const todayStr = new Date().toISOString().substring(0, 10);
+      // Compare full timestamps, not just the date portion. A date-only
+      // comparison (e.g. slotDateStr < todayStr) misses slots that are on
+      // *today* but whose start time has already elapsed (e.g. a 9am slot
+      // selected at 3pm today), letting them leak into the payload and get
+      // rejected by the backend as "past".
+      const now = new Date();
 
       const availableIds = [];
       let droppedPastSelections = 0;
@@ -84,9 +89,10 @@ function TeacherAvailabilityPage() {
       slots.forEach((slot) => {
         if (slot.booked) return;
 
-        const slotDateStr = slot.startTime.substring(0, 10);
-        if (slotDateStr < todayStr) {
-          // Selection on a past-date slot should never reach the payload.
+        const slotStart = new Date(slot.startTime);
+        if (slotStart < now) {
+          // Selection on a past (past day OR already-elapsed time today)
+          // slot should never reach the payload.
           // Track it so we can tell the user their toggle was ignored,
           // instead of silently claiming success.
           if (selectedSlots.includes(slot.id)) droppedPastSelections++;
@@ -103,8 +109,8 @@ function TeacherAvailabilityPage() {
       });
 
       if (droppedPastSelections > 0 && availableIds.length === 0 && selectedSlots.length === droppedPastSelections) {
-        // Every selected slot was a past-date slot — nothing was actually saved.
-        alert("Can't update availability for past dates. No changes were made.");
+        // Every selected slot was a past slot — nothing was actually saved.
+        alert("Can't update availability for past dates/times. No changes were made.");
         setSelectedSlots([]);
         return;
       }
@@ -115,7 +121,7 @@ function TeacherAvailabilityPage() {
       setSelectedSlots([]);
 
       if (droppedPastSelections > 0) {
-        alert("Availability updated successfully. Note: past-date selections were ignored.");
+        alert("Availability updated successfully. Note: past selections were ignored.");
       } else {
         alert("Availability updated successfully.");
       }

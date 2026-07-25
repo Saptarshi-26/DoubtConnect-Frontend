@@ -7,10 +7,13 @@ function formatTime(dateTime) {
   });
 }
 
+// Compares the full slot start timestamp against "now", not just the date
+// portion. A date-only comparison misses slots that are on *today* but
+// whose start time has already elapsed (e.g. a 9am slot at 3pm today),
+// letting them be toggled as "available" in the UI even though the
+// backend will (correctly) reject them as past.
 function isPastDateSlot(slot) {
-  const todayStr = new Date().toISOString().substring(0, 10);
-  const slotDateStr = slot.startTime.substring(0, 10);
-  return slotDateStr < todayStr;
+  return new Date(slot.startTime).getTime() < Date.now();
 }
 
 function SlotList({
